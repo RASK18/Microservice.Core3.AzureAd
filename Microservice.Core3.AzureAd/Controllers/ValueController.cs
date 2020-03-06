@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 #pragma warning disable CA1822 // Mark members as static
 namespace Microservice.Core3.AzureAd.Controllers
@@ -24,14 +25,14 @@ namespace Microservice.Core3.AzureAd.Controllers
 
         [HttpGet("RandomExceptionVoid")]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public void RandomExceptionVoid()
+        public Task<IActionResult> RandomExceptionVoid()
         {
             throw new Exception();
         }
 
         [HttpGet("RandomExceptionMessage")]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public void RandomExceptionMessage()
+        public Task<IActionResult> RandomExceptionMessage()
         {
             throw new Exception("This is a unhandle exception jeje");
         }

@@ -26,7 +26,7 @@ namespace Microservice.Core3.AzureAd
             IMvcBuilder builder = services.AddControllers();
             ConfigureJsonSettings(builder);
 
-            // External Custom 400 Bad Request with error message
+            // External Custom Bad request with error message
             builder.ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = c =>
                 throw new BadRequestCustomException(c.ModelState.Values.ToList().FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage));
         }

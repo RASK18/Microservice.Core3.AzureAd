@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -8,12 +8,13 @@ namespace Microservice.Core3.AzureAd
     {
         private static void ConfigureJsonSettings(IMvcBuilder builder)
         {
-            DefaultContractResolver resolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() };
+            DefaultContractResolver snakeCase = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() };
+            DefaultContractResolver camelCase = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
 
             // Json Settings for all responses
             builder.AddNewtonsoftJson(options =>
             {
-                options.SerializerSettings.ContractResolver = resolver;
+                options.SerializerSettings.ContractResolver = snakeCase;
                 options.SerializerSettings.Formatting = Formatting.Indented;
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
@@ -21,9 +22,9 @@ namespace Microservice.Core3.AzureAd
             // Json Settings for all static Serialize and Deserialize
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
-                ContractResolver = resolver,
+                ContractResolver = camelCase,
                 Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
             };
         }
     }

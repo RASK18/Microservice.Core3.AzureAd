@@ -2,15 +2,21 @@
 
 namespace Microservice.Core3.AzureAd.Configurations.Exceptions
 {
-    public class ExceptionsResponse
+    public class ExceptionDto
     {
         public string Title { get; set; }
         public string Detail { get; set; }
         public string Message { get; set; }
 
-        public string Method { get; set; }
-        public string Request { get; set; }
-        public string Body { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public ExceptionDto() { }
+
+        public ExceptionDto(BaseCustomException custom)
+        {
+            Title = custom.Title;
+            Detail = custom.Detail;
+            Message = custom.Message;
+        }
 
         public override string ToString()
         {

@@ -1,4 +1,3 @@
-﻿using AutoMapper;
 using Microservice.Core3.AzureAd.Literals;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -11,14 +10,12 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
 {
     public class ExceptionsMiddleware
     {
-        private readonly IMapper _mapper;
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionsMiddleware> _logger;
 
-        public ExceptionsMiddleware(RequestDelegate next, IMapper mapper, ILogger<ExceptionsMiddleware> logger)
+        public ExceptionsMiddleware(RequestDelegate next, ILogger<ExceptionsMiddleware> logger)
         {
             _next = next;
-            _mapper = mapper;
             _logger = logger;
         }
 
@@ -41,21 +38,24 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
             if (!(exception is BaseCustomException customException))
                 customException = ConvertToCustom(context.Response.StatusCode, exception.Message);
 
-            ExceptionsResponse error = _mapper.Map<ExceptionsResponse>(customException);
+            ExceptionDto error = new ExceptionDto(customException);
 
             HttpResponse response = context.Response;
             response.StatusCode = customException.Code;
             response.ContentType = Config.ApplicationJson;
             await response.WriteAsync(error.ToString());
 
-            error.Method = context.Request.Method;
-            error.Request = exception.Source + " --> " + context.Request.Path;
+            ExceptionModel errorModel = new ExceptionModel(error)
+            {
+                Method = context.Request.Method,
+                Request = exception.Source + " --> " + context.Request.Path
+            };
 
             string[] bodyMethods = { "POST", "PUT", "PATCH" };
-            if (bodyMethods.Contains(error.Method))
-                error.Body = await ReadBody(context);
+            if (bodyMethods.Contains(errorModel.Method))
+                errorModel.Body = await ReadBody(context);
 
-            _logger.LogError("\r\n" + error);
+            _logger.LogError("\r\n" + errorModel);
         }
 
         private static BaseCustomException ConvertToCustom(int statusCode, string message) =>

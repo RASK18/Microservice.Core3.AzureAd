@@ -1,29 +1,43 @@
-﻿namespace Microservice.Core3.AzureAd.Configurations.Exceptions
+﻿using System.Collections.Generic;
+
+namespace Microservice.Core3.AzureAd.Configurations.Exceptions
 {
     public static class StatusDetails
     {
-        public const string Title400 = "Bad Request";
-        public const string Detail400 = "Server couldn't understand that, something was sent incorrectly";
+        private const string BadRequest = "Server couldn't understand that, something was sent incorrectly";
+        private const string Unauthorized = "Valid authentication credentials are required";
+        private const string Forbidden = "You don't have permission to access";
+        private const string NotFound = "We couldn't find that";
+        private const string Conflict = "Something conflicts with your request, check the current status of resources";
+        private const string InternalServerError = "Something has gone wrong";
+        private const string NotImplemented = "This functionality is not supported yet";
+        private const string ServiceUnavailable = "Server is currently unable to handle your request due to a " +
+                                                  "temporary overload or scheduled maintenance, try it again later";
 
-        public const string Title401 = "Unauthorized";
-        public const string Detail401 = "Valid authentication credentials are required";
+        private static readonly Dictionary<Type, string> Details = new Dictionary<Type, string>
+        {
+            { Type.BadRequest, BadRequest },
+            { Type.Unauthorized, Unauthorized },
+            { Type.Forbidden, Forbidden },
+            { Type.NotFound, NotFound },
+            { Type.Conflict, Conflict },
+            { Type.InternalServerError, InternalServerError },
+            { Type.NotImplemented, NotImplemented },
+            { Type.ServiceUnavailable, ServiceUnavailable }
+        };
 
-        public const string Title403 = "Forbidden";
-        public const string Detail403 = "You don't have permission to access";
+        public static string Get(Type type) => Details[type];
+    }
 
-        public const string Title404 = "Not Found";
-        public const string Detail404 = "We couldn't find that";
-
-        public const string Title409 = "Conflict";
-        public const string Detail409 = "Something conflicts with your request, check the current status of resources";
-
-        public const string Title500 = "Internal Server Error";
-        public const string Detail500 = "Something has gone wrong";
-
-        public const string Title501 = "Not Implemented";
-        public const string Detail501 = "This functionality is not supported yet";
-
-        public const string Title503 = "Service Unavailable";
-        public const string Detail503 = "Server is currently unable to handle your request due to a temporary overload or scheduled maintenance, try it again later";
+    public enum Type
+    {
+        BadRequest = 400,
+        Unauthorized = 401,
+        Forbidden = 403,
+        NotFound = 404,
+        Conflict = 409,
+        InternalServerError = 500,
+        NotImplemented = 501,
+        ServiceUnavailable = 503
     }
 }

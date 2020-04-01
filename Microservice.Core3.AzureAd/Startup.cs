@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Microservice.Core3.AzureAd
 {
@@ -28,7 +27,7 @@ namespace Microservice.Core3.AzureAd
 
             // External Custom Bad request with error message
             builder.ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = c =>
-                throw new BadRequestCustomException(c.ModelState.Values.ToList().FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage));
+                throw new CustomException(Type.BadRequest, c.ModelState.Values.ToList().FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage));
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -41,8 +40,7 @@ namespace Microservice.Core3.AzureAd
             app.UseStatusCodePages(c =>
             {
                 int status = c.HttpContext.Response.StatusCode;
-                CustomExceptions.Throw(status);
-                return Task.CompletedTask;
+                throw new CustomException(status);
             });
 
             app.UseCors("CorsPolicy");

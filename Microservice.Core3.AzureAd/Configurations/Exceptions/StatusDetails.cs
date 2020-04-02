@@ -8,6 +8,7 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
         private const string Unauthorized = "Valid authentication credentials are required";
         private const string Forbidden = "You don't have permission to access";
         private const string NotFound = "We couldn't find that";
+        private const string MethodNotAllowed = "The method received is known but not supported by the target resource";
         private const string Conflict = "Something conflicts with your request, check the current status of resources";
         private const string InternalServerError = "Something has gone wrong";
         private const string NotImplemented = "This functionality is not supported yet";
@@ -23,7 +24,8 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
             { Type.Conflict, Conflict },
             { Type.InternalServerError, InternalServerError },
             { Type.NotImplemented, NotImplemented },
-            { Type.ServiceUnavailable, ServiceUnavailable }
+            { Type.ServiceUnavailable, ServiceUnavailable },
+            { Type.MethodNotAllowed, MethodNotAllowed }
         };
 
         public static string Get(Type type) => Details[type];
@@ -35,6 +37,7 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
         Unauthorized = 401,
         Forbidden = 403,
         NotFound = 404,
+        MethodNotAllowed = 405,
         Conflict = 409,
         InternalServerError = 500,
         NotImplemented = 501,

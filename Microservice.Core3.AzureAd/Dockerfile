@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Microservice.Core3.Basic/Microservice.Core3.Basic.csproj", "Microservice.Core3.Basic/"]
-RUN dotnet restore "Microservice.Core3.Basic/Microservice.Core3.Basic.csproj"
+COPY ["Microservice.Core3.AzureAd/Microservice.Core3.AzureAd.csproj", "Microservice.Core3.AzureAd/"]
+RUN dotnet restore "Microservice.Core3.AzureAd/Microservice.Core3.AzureAd.csproj"
 COPY . .
-WORKDIR "/src/Microservice.Core3.Basic"
-RUN dotnet build "Microservice.Core3.Basic.csproj" -c Release -o /app/build
+WORKDIR "/src/Microservice.Core3.AzureAd"
+RUN dotnet build "Microservice.Core3.AzureAd.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Microservice.Core3.Basic.csproj" -c Release -o /app/publish
+RUN dotnet publish "Microservice.Core3.AzureAd.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Microservice.Core3.Basic.dll"]
+ENTRYPOINT ["dotnet", "Microservice.Core3.AzureAd.dll"]

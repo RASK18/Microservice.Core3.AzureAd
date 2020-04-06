@@ -21,11 +21,11 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
             { Type.Unauthorized, Unauthorized },
             { Type.Forbidden, Forbidden },
             { Type.NotFound, NotFound },
+            { Type.MethodNotAllowed, MethodNotAllowed },
             { Type.Conflict, Conflict },
             { Type.InternalServerError, InternalServerError },
             { Type.NotImplemented, NotImplemented },
-            { Type.ServiceUnavailable, ServiceUnavailable },
-            { Type.MethodNotAllowed, MethodNotAllowed }
+            { Type.ServiceUnavailable, ServiceUnavailable }
         };
 
         public static string Get(Type type) => Details[type];

@@ -8,6 +8,8 @@ namespace Microservice.Core3.AzureAd.Utils
 {
     public static class Extensions
     {
+        public static bool IsNullOrWhiteSpace(this string str) => string.IsNullOrWhiteSpace(str);
+
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> iEnum) => iEnum == null || !iEnum.Any();
 
         public static string ToBase64(this string str)

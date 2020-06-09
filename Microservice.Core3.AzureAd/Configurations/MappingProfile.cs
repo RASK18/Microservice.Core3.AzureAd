@@ -7,6 +7,11 @@ namespace Microservice.Core3.AzureAd.Configurations
     {
         public MappingProfile()
         {
+            // Disable mapping by same name (You will have to specify each mapping manually) 
+            DefaultMemberConfig.MemberMappers.Clear();
+            DefaultMemberConfig.NameMapper.NamedMappers.Clear();
+
+
         }
     }
 }

@@ -1,12 +1,11 @@
-﻿using Microservice.Core3.AzureAd.Data.Dto;
+﻿using Microservice.Core3.AzureAd.Configurations.Exceptions;
+using Microservice.Core3.AzureAd.Data.Dto;
 using Microservice.Core3.AzureAd.Literals;
 using Microservice.Core3.AzureAd.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Threading.Tasks;
-using Microservice.Core3.AzureAd.Configurations.Exceptions;
 
 namespace Microservice.Core3.AzureAd.Controllers
 {
@@ -20,37 +19,40 @@ namespace Microservice.Core3.AzureAd.Controllers
 
         public ValueController(ValueService valueService) => _valueService = valueService;
 
-        [HttpGet("RandomExceptionVoid")]
-        public Task<IActionResult> RandomExceptionVoid()
+        [HttpGet("RandomExceptionVoid", Name = "RandomExceptionVoid")]
+        public IActionResult RandomExceptionVoid()
         {
             throw new Exception();
         }
 
-        [HttpGet("RandomExceptionMessage")]
-        public Task<IActionResult> RandomExceptionMessage()
+        [HttpGet("RandomExceptionMessage", Name = "RandomExceptionMessage")]
+        public IActionResult RandomExceptionMessage()
         {
             throw new Exception("This is a unhandled exception jeje");
         }
 
-        [HttpGet("CustomExceptionVoid")]
+        [HttpGet("CustomExceptionVoid", Name = "CustomExceptionVoid")]
         [ProducesResponseType(typeof(CustomExceptionDto), StatusCodes.Status409Conflict)]
-        public void CustomExceptionVoid()
+        public IActionResult CustomExceptionVoid()
         {
             _valueService.CustomExceptionVoid();
+            return NoContent();
         }
 
-        [HttpGet("CustomExceptionMessage")]
+        [HttpGet("CustomExceptionMessage", Name = "CustomExceptionMessage")]
         [ProducesResponseType(typeof(CustomExceptionDto), StatusCodes.Status409Conflict)]
-        public void CustomExceptionMessage()
+        public IActionResult CustomExceptionMessage()
         {
             _valueService.CustomExceptionMessage();
+            return NoContent();
         }
 
-        [HttpGet("Normal")]
+        [HttpGet("Normal", Name = "Normal")]
         [ProducesResponseType(typeof(ValueDto), StatusCodes.Status200OK)]
-        public ValueDto Normal([FromQuery] int id)
+        public IActionResult Normal([FromQuery] int id)
         {
-            return new ValueDto("This is a normal response");
+            ValueDto result = new ValueDto("This is a normal response");
+            return Ok(result);
         }
 
     }

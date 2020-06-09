@@ -9,8 +9,8 @@ namespace Microservice.Core3.AzureAd.Services
 
         public ValueService(IMapper mapper) => _mapper = mapper;
 
-        public void CustomExceptionVoid() => throw new CustomException(Type.Conflict);
+        public void CustomExceptionVoid() => throw new CustomException(Types.Conflict);
 
-        public void CustomExceptionMessage() => throw new CustomException(Type.Conflict, "This is a known exception, yei!");
+        public void CustomExceptionMessage() => throw new CustomException(Types.Conflict, "This is a known exception, yei!");
     }
 }

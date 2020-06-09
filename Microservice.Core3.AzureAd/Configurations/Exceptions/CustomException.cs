@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,19 +17,20 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
         public string Detail { get; set; }
         public new string Message { get; set; }
         public string Request { get; set; }
+        public string User { get; set; }
         public string Method { get; set; }
         public string Body { get; set; }
 
-        public CustomException(Type type, string message = null) => Fill(type, message);
+        public CustomException(Types type, string message = null) => Fill(type, message);
 
         public CustomException(int statusCode, string message = null)
         {
-            bool valid = Enum.IsDefined(typeof(Type), statusCode);
-            Type type = valid ? (Type)statusCode : Type.InternalServerError;
+            bool valid = Enum.IsDefined(typeof(Types), statusCode);
+            Types type = valid ? (Types)statusCode : Types.InternalServerError;
             Fill(type, message);
         }
 
-        public override string ToString() => JsonConvert.SerializeObject(new { Title, Detail, Message, Source, Request, Method, Body });
+        public override string ToString() => JsonConvert.SerializeObject(new { Title, Detail, Message, Source, User, Method, Request, Body });
 
         public async Task AddRequest(HttpRequest request)
         {
@@ -43,7 +46,17 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
             Body = await reader.ReadToEndAsync();
         }
 
-        private void Fill(Type type, string message)
+        public async Task AddUser(HttpContext context)
+        {
+            string jwt = await context.GetTokenAsync("access_token");
+
+            if (jwt == null) return;
+
+            JwtSecurityToken token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
+            User = token.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+        }
+
+        private void Fill(Types type, string message)
         {
             string details = StatusDetails.Get(type);
             IEnumerable<string> chars = type.ToString().Select(c => char.IsUpper(c) ? " " + c : c.ToString());

@@ -107,7 +107,7 @@ namespace Microservice.Core3.AzureAd
         {
             context.SchemaGenerator.GenerateSchema(typeof(CustomExceptionDto), context.SchemaRepository);
 
-            OpenApiReference reference = new OpenApiReference { Id = typeof(CustomExceptionDto).Name, Type = ReferenceType.Schema };
+            OpenApiReference reference = new OpenApiReference { Id = nameof(CustomExceptionDto), Type = ReferenceType.Schema };
             OpenApiSchema schema = new OpenApiSchema { Reference = reference };
             OpenApiMediaType mediaType = new OpenApiMediaType { Schema = schema };
             Dictionary<string, OpenApiMediaType> content = new Dictionary<string, OpenApiMediaType> { { "application/json", mediaType } };

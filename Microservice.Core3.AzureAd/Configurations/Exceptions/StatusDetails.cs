@@ -14,24 +14,26 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
         private const string NotImplemented = "This functionality is not supported yet";
         private const string ServiceUnavailable = "Server is currently unable to handle your request due to a " +
                                                   "temporary overload or scheduled maintenance, try it again later";
+        private const string TimeOut = "The server did not receive a timely response from another required server";
 
-        private static readonly Dictionary<Type, string> Details = new Dictionary<Type, string>
+        private static readonly Dictionary<Types, string> Details = new Dictionary<Types, string>
         {
-            { Type.BadRequest, BadRequest },
-            { Type.Unauthorized, Unauthorized },
-            { Type.Forbidden, Forbidden },
-            { Type.NotFound, NotFound },
-            { Type.MethodNotAllowed, MethodNotAllowed },
-            { Type.Conflict, Conflict },
-            { Type.InternalServerError, InternalServerError },
-            { Type.NotImplemented, NotImplemented },
-            { Type.ServiceUnavailable, ServiceUnavailable }
+            { Types.BadRequest, BadRequest },
+            { Types.Unauthorized, Unauthorized },
+            { Types.Forbidden, Forbidden },
+            { Types.NotFound, NotFound },
+            { Types.MethodNotAllowed, MethodNotAllowed },
+            { Types.Conflict, Conflict },
+            { Types.InternalServerError, InternalServerError },
+            { Types.NotImplemented, NotImplemented },
+            { Types.ServiceUnavailable, ServiceUnavailable },
+            { Types.TimeOut, TimeOut }
         };
 
-        public static string Get(Type type) => Details[type];
+        public static string Get(Types type) => Details[type];
     }
 
-    public enum Type
+    public enum Types
     {
         BadRequest = 400,
         Unauthorized = 401,
@@ -41,6 +43,7 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
         Conflict = 409,
         InternalServerError = 500,
         NotImplemented = 501,
-        ServiceUnavailable = 503
+        ServiceUnavailable = 503,
+        TimeOut = 504
     }
 }

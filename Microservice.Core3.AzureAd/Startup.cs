@@ -19,6 +19,7 @@ namespace Microservice.Core3.AzureAd
             ConfigureCors(services);
             ConfigureSwagger(services);
             InjectDependencies(services);
+            AddHttpClients(services);
             ConfigureAuthentication(services);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -27,10 +28,9 @@ namespace Microservice.Core3.AzureAd
 
             // External Custom Bad request with error message
             builder.ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = c =>
-                throw new CustomException(Type.BadRequest, c.ModelState.Values.ToList().FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage));
+                throw new CustomException(Types.BadRequest, c.ModelState.Values.ToList().FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage));
         }
 
-        // ReSharper disable once UnusedMember.Global
         public static void Configure(IApplicationBuilder app)
         {
             // Internal Custom Errors

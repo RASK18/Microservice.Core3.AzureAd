@@ -35,21 +35,17 @@ namespace Microservice.Core3.AzureAd
 
         private static void ConfigureSwagger(IApplicationBuilder app)
         {
-            // This is to make it work with my kubernetes structure, you can use: app.UseSwagger();
-            string processName = Process.GetCurrentProcess().ProcessName;
-            bool isLocal = processName == "iisexpress" || processName == ApiName;
-            string basePath = isLocal ? "" : "/FoLdEr_SeRvEr_NaMe"; // ToDo: Remember change this
-
             app.UseSwagger(o =>
                 o.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-                    swaggerDoc.Servers.Add(new OpenApiServer { Url = basePath })));
+                    swaggerDoc.Servers.Add(new OpenApiServer { Url = BasePath })));
 
             app.UseSwaggerUI(o =>
             {
+                o.OAuthUsePkce();
                 o.DisplayOperationId();
                 o.DocumentTitle = ApiName;
                 o.OAuthClientId(Configuration["AzureAd:ClientId"]);
-                o.SwaggerEndpoint($"{basePath}/swagger/{TitleV1}/swagger.json", " V1");
+                o.SwaggerEndpoint($"{BasePath}/swagger/{TitleV1}/swagger.json", " V1");
             });
         }
 
@@ -57,15 +53,17 @@ namespace Microservice.Core3.AzureAd
         {
             string scope = $"api://{Configuration["AzureAd:ClientId"]}/access_as_user"; // ToDo: Remember change this
             string authUrl = Configuration["AzureAd:Instance"] + Configuration["AzureAd:TenantId"] + "/oauth2/v2.0/authorize";
+            string tokenUrl = Configuration["AzureAd:Instance"] + Configuration["AzureAd:TenantId"] + "/oauth2/v2.0/token";
 
             o.AddSecurityDefinition("aad-jwt", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,
                 Flows = new OpenApiOAuthFlows
                 {
-                    Implicit = new OpenApiOAuthFlow
+                    AuthorizationCode = new OpenApiOAuthFlow
                     {
                         AuthorizationUrl = new Uri(authUrl),
+                        TokenUrl = new Uri(tokenUrl),
                         Scopes = new Dictionary<string, string> { { scope, "Access as User" } }
                     }
                 }

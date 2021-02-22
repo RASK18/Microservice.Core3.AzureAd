@@ -52,7 +52,7 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
 
             await customEx.AddUser(context);
             await customEx.AddRequest(context.Request);
-            _logger.LogError("\r\n" + customEx);
+            _logger.LogError(Environment.NewLine + customEx);
         }
     }
 }

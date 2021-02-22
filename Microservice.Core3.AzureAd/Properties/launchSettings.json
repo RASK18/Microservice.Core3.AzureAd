@@ -9,29 +9,22 @@
     "windowsAuthentication": false
   },
   "profiles": {
-    "Docker": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger/index.html",
-      "publishAllPorts": true,
-      "useSSL": true
-    },
     "IIS Express": {
       "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger/index.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "launchBrowser": true,
-      "launchUrl": "swagger/index.html"
+      }
     },
     "Microservice.Core3.AzureAd": {
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger/index.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "launchBrowser": true,
-      "launchUrl": "swagger/index.html"
+      }
     }
   }
 }

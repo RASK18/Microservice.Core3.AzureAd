@@ -8,19 +8,19 @@ namespace Microservice.Core3.AzureAd
     {
         private static void ConfigureAuthentication(IServiceCollection services)
         {
-            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-                .AddJwtBearer("AzureAD", o =>
+            services.AddAuthentication(AzureADDefaults.AuthenticationScheme) // ToDo: Use your schema
+                    .AddJwtBearer(AzureADDefaults.AuthenticationScheme, o =>
                     {
-                        o.Audience = Configuration["AzureAd:ClientId"];
-                        o.Authority = Configuration["AzureAd:Instance"] + Configuration["AzureAd:TenantId"];
-
+                        o.RequireHttpsMetadata = true;
+                        o.Audience = Configuration["Security:ClientId"];
+                        o.Authority = Configuration["Security:Authority"] + "/v2.0"; // ToDo: v2 only if v2
                         o.TokenValidationParameters = new TokenValidationParameters
                         {
-                            ValidAudience = o.Audience,
-                            ValidIssuer = o.Authority + "/v2.0"
+                            ValidateIssuer = true,
+                            ValidIssuer = o.Authority,
+                            ValidAudience = o.Audience // ToDo: Use ValidAudiences if many
                         };
-                    }
-                );
+                    });
         }
 
         private static void ConfigureCors(IServiceCollection services)

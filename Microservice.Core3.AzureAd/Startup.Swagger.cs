@@ -40,30 +40,35 @@ namespace Microservice.Core3.AzureAd
 
             app.UseSwaggerUI(o =>
             {
-                o.OAuthUsePkce();
+                o.OAuthUsePkce(); // ToDo: No need if Implicit
                 o.DisplayOperationId();
                 o.DocumentTitle = ApiName;
-                o.OAuthClientId(Configuration["AzureAd:ClientId"]);
+                o.OAuthClientId(Configuration["Security:ClientId"]);
                 o.SwaggerEndpoint($"{BasePath}/swagger/{TitleV1}/swagger.json", " V1");
             });
         }
 
         private static void AddSecurity(SwaggerGenOptions o)
         {
-            string scope = $"api://{Configuration["AzureAd:ClientId"]}/access_as_user"; // ToDo: Remember change this
-            string authUrl = Configuration["AzureAd:Instance"] + Configuration["AzureAd:TenantId"] + "/oauth2/v2.0/authorize";
-            string tokenUrl = Configuration["AzureAd:Instance"] + Configuration["AzureAd:TenantId"] + "/oauth2/v2.0/token";
+            const string securityName = "OAuth2";
+            const string authEndpoint = "/oauth2/v2.0"; // ToDo: Change if necessary
+            string tokenUrl = Configuration["Security:Authority"] + authEndpoint + "/token";
+            string authUrl = Configuration["Security:Authority"] + authEndpoint + "/authorize";
+            Dictionary<string, string> scope = new Dictionary<string, string>
+            {
+                { $"api://{Configuration["Security:ClientId"]}/access_as_user", "Access as User" } // ToDo: Remember change this
+            };
 
-            o.AddSecurityDefinition("aad-jwt", new OpenApiSecurityScheme
+            o.AddSecurityDefinition(securityName, new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,
                 Flows = new OpenApiOAuthFlows
                 {
-                    AuthorizationCode = new OpenApiOAuthFlow
+                    AuthorizationCode = new OpenApiOAuthFlow // ToDo: Check if Implicit
                     {
-                        AuthorizationUrl = new Uri(authUrl),
                         TokenUrl = new Uri(tokenUrl),
-                        Scopes = new Dictionary<string, string> { { scope, "Access as User" } }
+                        AuthorizationUrl = new Uri(authUrl),
+                        Scopes = scope
                     }
                 }
             });
@@ -71,11 +76,8 @@ namespace Microservice.Core3.AzureAd
             o.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference { Id = "aad-jwt", Type = ReferenceType.SecurityScheme }
-                    },
-                    new List<string> { scope }
+                    new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = securityName, Type = ReferenceType.SecurityScheme } },
+                    scope.Select(s => s.Key).ToList()
                 }
             });
         }

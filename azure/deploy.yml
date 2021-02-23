@@ -1,0 +1,40 @@
+parameters:
+- name: envName
+- name: namespace
+
+jobs:
+- deployment: Deploy_Svc
+  displayName: Deploy Svc
+  pool:
+    vmImage: $(vmImageName)
+  environment: ${{ format('{0}.{1}', parameters.envName, parameters.namespace) }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - script: echo '##vso[task.setvariable variable=aspNetCoreEnv]${{parameters.envName}}'
+          displayName: Set AspNetCoreEnv
+        - script: |
+            echo 'AspNetCoreEnv: $(aspNetCoreEnv)'
+            echo 'EnvName: ${{parameters.envName}}'
+            echo 'Namespace: ${{parameters.namespace}}'
+          displayName: Console log
+        - task: replacetokens@3
+          displayName: Replacing tokens
+          inputs:
+            rootDirectory: '$(Pipeline.Workspace)/manifests'
+            targetFiles: 'deployment-service.yml'
+            encoding: 'auto'
+            writeBOM: true
+            actionOnMissing: 'warn'
+            keepToken: false
+            tokenPrefix: '#{'
+            tokenSuffix: '}#'
+        - task: KubernetesManifest@0
+          displayName: Deploy to Kubernetes cluster
+          inputs:
+            action: deploy
+            manifests: |
+              $(Pipeline.Workspace)/manifests/deployment-service.yml
+            containers: |
+              $(containerRegistry)/$(nameLessThan15):$(tag)

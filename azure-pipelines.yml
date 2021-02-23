@@ -1,0 +1,61 @@
+trigger:
+- master
+
+resources:
+- repo: self
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+parameters:
+- name: lastEnv
+  type: string
+  displayName: 'Last enviroment to release'
+  default: Development
+  values:
+  - Development
+# - Uat
+  - Production
+
+variables:
+- group: Commons
+- name: aspNetCoreEnv
+- name: namespaceBase
+  value: 'ToDo'
+- name: nameLessThan15
+  value: 'ToDo'
+
+stages:
+- stage: Build_stage
+  displayName: Build stage
+  jobs:
+  - template: azure/build.yml
+
+- stage: Deploy_Development
+  displayName: Deploy Development
+  dependsOn: Build_stage
+  jobs:
+  - template: azure/deploy.yml
+    parameters:
+      envName: Development
+      namespace: $(namespaceBase)-dev
+
+#- stage: Deploy_Uat
+#  displayName: Deploy Uat
+#  dependsOn: Deploy_Development
+#  condition: and(succeeded(), in('${{parameters.lastEnv}}', 'Uat', 'Production'))
+#  jobs:
+#  - template: azure/deploy.yml
+#    parameters:
+#      envName: Uat
+#      namespace: $(namespaceBase)-uat
+
+- stage: Deploy_Production
+  displayName: Deploy Production
+  dependsOn: Deploy_Development
+  condition: and(succeeded(), in('${{parameters.lastEnv}}', 'Production'))
+  jobs:
+  - template: azure/deploy.yml
+    parameters:
+      envName: Production
+      namespace: $(namespaceBase)-pro

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: #{nameLessThan15}#
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: #{nameLessThan15}#
+  template:
+    metadata:
+      labels:
+        app: #{nameLessThan15}#
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: #{nameLessThan15}#
+        image: #{containerRegistry}#/#{nameLessThan15}#
+        ports:
+        - containerPort: 80
+          name: #{nameLessThan15}#
+        env:
+        - name: "ASPNETCORE_ENVIRONMENT"
+          value: #{aspNetCoreEnv}#
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: #{nameLessThan15}#
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: #{nameLessThan15}#

@@ -16,7 +16,7 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
         public string Title { get; set; }
         public string Detail { get; set; }
         public new string Message { get; set; }
-        public DateTimeOffset Time { get; set; }
+        public DateTime Time { get; set; }
         public string User { get; set; }
         public string Method { get; set; }
         public string Request { get; set; }
@@ -31,11 +31,12 @@ namespace Microservice.Core3.AzureAd.Configurations.Exceptions
             Fill(type, message);
         }
 
-        public override string ToString() => JsonConvert.SerializeObject(new { Title, Detail, Message, Source, Time, User, Method, Request, Body });
+        public override string ToString() => JsonConvert.SerializeObject(
+            new { Title, Detail, Message, Source, Time = Time.ToString("G"), User, Method, Request, Body });
 
         public async Task AddRequest(HttpRequest request)
         {
-            Time = DateTimeOffset.UtcNow;
+            Time = DateTime.UtcNow;
             Method = request.Method;
             Request = request.Path;
 
